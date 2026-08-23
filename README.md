@@ -4,7 +4,7 @@ This private Next.js, React, and Tailwind application is the fictional Harborvie
 
 ## Start locally
 
-Copy `.env.example` to `.env.local`. The template uses the deployed Harborview Cloud Run API. For a local API instance, replace the URL with `http://localhost:5090`, then run:
+The browser client defaults to the Harborview Cloud Run API configured in `src/lib/clinic-api.ts`. To point the frontend at a local API during development, create `.env.local` with `NEXT_PUBLIC_HARBORVIEW_API_URL=http://localhost:5090`. Then run:
 
 ```bash
 pnpm install
