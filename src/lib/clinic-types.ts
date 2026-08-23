@@ -51,6 +51,72 @@ export type Patient = {
   preferredContactMethod: string;
   email?: string;
   phone?: string;
+  portalSubjectId?: string;
+  registrationStatus?: string;
+  preferredLanguage?: string;
+};
+
+export type DemoActor = {
+  mode: "visitor" | "activePatient" | "receptionist";
+  id: string;
+};
+
+export type RegistrationDraft = {
+  id: string;
+  status: string;
+  sourceDocumentId?: string;
+  candidateFieldsJson: string;
+  missingFieldsJson: string;
+  createdAtUtc: string;
+  expiresAtUtc: string;
+};
+
+export type ExtractedDocument = {
+  status: "success" | "error";
+  documentId: string;
+  extractionStatus: string;
+  sourceLanguage: string;
+  candidateFields: Record<string, string | null>;
+  missingFields: string[];
+  classification: "extracted/unverified";
+  safetyNotice: string;
+};
+
+export type LaboratoryResultRelease = {
+  id: string;
+  resultReference: string;
+  serviceName: string;
+  collectedAtUtc: string;
+  releaseStatus: "Pending" | "Released";
+  availableAtUtc?: string;
+  portalDocumentUrl?: string;
+};
+
+export type PatientDocumentRequest = {
+  id: string;
+  category: string;
+  patientVisibleLabel: string;
+  status: string;
+  dueAtUtc?: string;
+};
+
+export type ClientManagedEvent = {
+  id: string;
+  conversationId: string;
+  role: "user" | "assistant" | "tool";
+  content: string;
+  isInternal: boolean;
+  turnId?: string;
+  eventType?: string;
+  toolName?: string;
+  toolStatus?: string;
+  createdAtUtc: string;
+};
+
+export type WorkflowBlocked = {
+  status: "blocked";
+  reason: string;
+  summary: string;
 };
 
 export type LaboratoryService = {
