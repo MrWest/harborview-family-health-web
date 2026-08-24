@@ -3,7 +3,7 @@
 // Design: Harborview’s calm, paper-and-ink administrative experience uses warm neutrals, deep harbor blue, and restrained sea-glass accents; actions remain explicit and human-centred.
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { FileText, LockKeyhole, Search, ShieldCheck, Upload } from "lucide-react";
+import { Database, FileScan, FileText, LockKeyhole, MessageSquareText, Search, ShieldCheck, ShieldOff, Upload } from "lucide-react";
 import { ClientManagedAssistantLoader } from "@/components/directiv/ClientManagedAssistantLoader";
 import { clinicApi } from "@/lib/clinic-api";
 import type { AppointmentSlot, ExtractedDocument } from "@/lib/clinic-types";
@@ -117,6 +117,12 @@ export function VisitorRegistrationWorkspace() {
 
   const missing = useMemo(() => requiredFields.filter((field) => !draft.fields[field]?.trim()), [draft.fields]);
   const candidateFields = new Set(draft.extractedFields ?? []);
+  const patientReportedCandidateCount = [
+    "patientReportedConditions",
+    "patientReportedAllergies",
+    "patientReportedMedications",
+    "patientReportedProcedures",
+  ].filter((field) => candidateFields.has(field)).length;
   const setField = (field: string, value: string) => setDraft((current) => ({
     ...current,
     fields: { ...current.fields, [field]: value },
@@ -159,6 +165,15 @@ export function VisitorRegistrationWorkspace() {
         <div className="mt-8 border border-[#277579]/20 bg-[#dcece7] p-5 text-sm leading-6"><div className="flex gap-3"><ShieldCheck className="mt-0.5 shrink-0 text-[#277579]" size={19}/><p><strong>Administrative only.</strong> Any patient-reported conditions, allergies, medications, or procedures are copied as <strong>extracted/unverified</strong> text. This proof does not diagnose, triage, interpret results, or recommend treatment.</p></div></div>
         <div className="mt-8 border border-dashed border-[#277579]/35 bg-white p-6"><label className="flex cursor-pointer items-start gap-4"><span className="grid h-11 w-11 shrink-0 place-items-center rounded-full bg-[#102b3d] text-[#a9d9cf]"><Upload size={19}/></span><span><strong className="block">Prefill this form from a registration or medical-record PDF</strong><span className="mt-1 block text-sm leading-6 text-[#102b3d]/62">Harborview scans labelled administrative and patient-reported candidate fields only. PDF, 10 MB maximum.</span><input className="sr-only" type="file" accept="application/pdf" onChange={(event: ChangeEvent<HTMLInputElement>) => void upload(event.target.files?.[0])}/></span></label>{uploadState === "loading" && <p className="mt-4 text-sm text-[#277579]">Reading labelled candidate fields…</p>}</div>
         {notice && <p className={`mt-4 border-l-2 px-4 py-3 text-sm leading-6 ${uploadState === "error" ? "border-red-500 bg-red-50 text-red-800" : "border-[#277579] bg-white text-[#102b3d]/75"}`}>{notice}</p>}
+        {uploadState === "done" && <section className="mt-5 border border-[#277579]/30 bg-[#102b3d] p-6 text-white" aria-label="Document and data provenance">
+          <div className="flex items-start justify-between gap-5"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#a9d9cf]">Extraction provenance receipt</p><h2 className="mt-2 font-serif text-3xl tracking-[-.03em]">Your document helped populate this form—<em className="font-normal text-[#a9d9cf]">not a Directiv record.</em></h2></div><ShieldOff className="shrink-0 text-[#a9d9cf]" size={28}/></div>
+          <div className="mt-6 grid gap-px border border-white/15 bg-white/15 sm:grid-cols-3">
+            <div className="bg-[#102b3d] p-4"><FileScan className="text-[#a9d9cf]" size={20}/><p className="mt-4 text-sm font-bold">1. Direct to Harborview</p><p className="mt-2 text-xs leading-5 text-white/65">Your PDF was sent to Harborview’s candidate-field extraction endpoint, not to Directiv.</p></div>
+            <div className="bg-[#102b3d] p-4"><Database className="text-[#a9d9cf]" size={20}/><p className="mt-4 text-sm font-bold">2. Local form is populated</p><p className="mt-2 text-xs leading-5 text-white/65">{candidateFields.size} labelled candidate fields now appear in this browser-local form for your review.</p></div>
+            <div className="bg-[#102b3d] p-4"><ShieldOff className="text-[#a9d9cf]" size={20}/><p className="mt-4 text-sm font-bold">3. No Directiv registration</p><p className="mt-2 text-xs leading-5 text-white/65">The PDF and these extracted candidates were not attached to Directiv or registered as a patient record.</p></div>
+          </div>
+          <div className="mt-5 flex gap-3 border-t border-white/15 pt-5 text-xs leading-5 text-white/70"><MessageSquareText className="mt-0.5 shrink-0 text-[#a9d9cf]" size={17}/><p><strong className="text-white">Client-Managed assistant boundary:</strong> Directiv may process the bounded chat messages you choose to send, but Harborview does not automatically send the PDF or the extracted conditions, allergies, medications, or procedures below. {patientReportedCandidateCount ? `${patientReportedCandidateCount} patient-reported medical field${patientReportedCandidateCount === 1 ? " is" : "s are"} visibly marked extracted/unverified for your review.` : "Patient-reported medical candidates remain labelled extracted/unverified when present."}</p></div>
+        </section>}
 
         <div className="mt-10 space-y-10">
           {formSections.map((section) => <section className="border-t border-[#102b3d]/12 pt-7" key={section.title}>
