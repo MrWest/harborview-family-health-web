@@ -10,6 +10,19 @@ type AgentActionOptions = {
   navigate: (pathname: string) => void;
 };
 
+const VISITOR_DRAFT_STORAGE_KEY = "harborview:visitor-registration-draft";
+const VISITOR_DRAFT_FIELDS = [
+  "displayName", "dateOfBirth", "email", "phone", "preferredLanguage", "countryOrRegion",
+  "addressLine1", "addressLine2", "city", "stateOrProvince", "postalCode", "communicationPreference",
+  "emergencyContactName", "emergencyContactRelationship", "emergencyContactPhone",
+  "payerOrPlan", "memberOrPolicyNumber", "referralSource", "reasonForVisit",
+  "patientReportedConditions", "patientReportedAllergies", "patientReportedMedications", "patientReportedProcedures",
+] as const;
+const VISITOR_DRAFT_FIELD_SET = new Set<string>(VISITOR_DRAFT_FIELDS);
+const PATIENT_REPORTED_DRAFT_FIELDS = new Set<string>([
+  "patientReportedConditions", "patientReportedAllergies", "patientReportedMedications", "patientReportedProcedures",
+]);
+
 function blocked(summary: string): ToolResult {
   return { status: "error", summary, detailed_data: { status: "blocked" } };
 }
@@ -35,17 +48,33 @@ function slotItems(slots: Array<{ id: string; resourceId: string; startsAtUtc: s
 
 function updateVisitorDraft(toolCall: ToolCall, actor: DemoActor): ToolResult {
   if (actor.mode !== "visitor") return blocked("This local registration-draft action is available only in the prospective visitor lane.");
-  const field = typeof toolCall.parameters.field === "string" ? toolCall.parameters.field : "";
-  const value = typeof toolCall.parameters.value === "string" ? toolCall.parameters.value : "";
-  if (!field || !value) return blocked("A field name and a user-confirmed value are required before updating a local draft.");
+  const patch = Object.entries(toolCall.parameters)
+    .filter(([field, value]) => VISITOR_DRAFT_FIELD_SET.has(field) && typeof value === "string" && value.trim().length > 0)
+    .map(([field, value]) => [field, (value as string).trim()] as const)
+    .filter(([field, value]) => {
+      if (value.length > (PATIENT_REPORTED_DRAFT_FIELDS.has(field) ? 1000 : 350)) return false;
+      if (field === "dateOfBirth") return /^\d{4}-\d{2}-\d{2}$/.test(value);
+      if (field === "email") return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      return true;
+    });
 
-  const storageKey = "harborview:visitor-registration-draft";
-  const saved = JSON.parse(window.localStorage.getItem(storageKey) ?? "{\"fields\":{}}") as { fields?: Record<string, string> };
-  const next = { ...saved, fields: { ...(saved.fields ?? {}), [field]: value } };
-  window.localStorage.setItem(storageKey, JSON.stringify(next));
+  if (!patch.length) return blocked("At least one approved, non-empty, user-confirmed registration value is required for a local draft update.");
+
+  const saved = JSON.parse(window.localStorage.getItem(VISITOR_DRAFT_STORAGE_KEY) ?? "{\"fields\":{}}") as { fields?: Record<string, string>; extractedFields?: string[] };
+  const updatedFields = patch.map(([field]) => field);
+  const next = {
+    ...saved,
+    fields: { ...(saved.fields ?? {}), ...Object.fromEntries(patch) },
+    extractedFields: (saved.extractedFields ?? []).filter((field) => !updatedFields.includes(field)),
+  };
+  window.localStorage.setItem(VISITOR_DRAFT_STORAGE_KEY, JSON.stringify(next));
   window.dispatchEvent(new CustomEvent("harborview:visitor-draft-updated", { detail: next }));
 
-  return { status: "success", summary: `Updated the local visitor draft field '${field}'. No patient, registration, or appointment was created.`, detailed_data: { field, persisted: false } };
+  return {
+    status: "success",
+    summary: `Updated ${updatedFields.length} local visitor draft field${updatedFields.length === 1 ? "" : "s"}. No patient, registration, intake, hold, appointment, PDF, or extracted document text was sent to Directiv or persisted by Harborview.`,
+    detailed_data: { updatedFields, persisted: false, clientManagedBoundary: "browser-local visitor draft only" },
+  };
 }
 
 function navigateToView(toolCall: ToolCall, options: AgentActionOptions): ToolResult {
@@ -80,7 +109,7 @@ export function createHarborviewAgentActions(options: AgentActionOptions): OnInt
 
     try {
       switch (toolCall.toolName) {
-        case "set_local_registration_field":
+        case "update_local_registration_draft":
           return updateVisitorDraft(toolCall, actor);
         case "navigate_to_view":
           return navigateToView(toolCall, options);
