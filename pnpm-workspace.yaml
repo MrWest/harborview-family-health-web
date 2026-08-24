@@ -1,3 +1,6 @@
 allowBuilds:
   sharp: false
   unrs-resolver: false
+minimumReleaseAgeExclude:
+  - '@directivsys/core-sdk@0.1.10'
+  - '@directivsys/react-sdk@0.1.14'

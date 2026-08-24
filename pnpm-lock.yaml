@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@directivsys/react-sdk':
+        specifier: 0.1.14
+        version: 0.1.14(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       lucide-react:
         specifier: ^1.33.0
         version: 1.33.0(react@19.2.8)
@@ -118,6 +121,16 @@ packages:
   '@babel/types@7.29.8':
     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
     engines: {node: '>=6.9.0'}
+
+  '@directivsys/core-sdk@0.1.10':
+    resolution: {integrity: sha512-cxaA5jF6cLSoTXYhANwR3W7yn1PzYilnDr2fI38e6MulBwgFeec3S/xzSugdT8SUQSCm9EcExcSwdYRgQxbyjw==}
+    engines: {node: '>=18'}
+
+  '@directivsys/react-sdk@0.1.14':
+    resolution: {integrity: sha512-85MpeU29UWSeHhqi6qxVPvZ1aVb0afKVwvYk2W1SlBdm4fTPQN8mG1UQQ0L8TqLEPO1Eme/ltGoQtq5q1o+ylQ==}
+    peerDependencies:
+      react: '>=18'
+      react-dom: '>=18'
 
   '@emnapi/core@1.10.0':
     resolution: {integrity: sha512-yq6OkJ4p82CAfPl0u9mQebQHKPJkY7WrIuk205cTYnYe+k2Z8YBh11FrbRG/H6ihirqcacOgl2BIO8oyMQLeXw==}
@@ -2119,6 +2132,14 @@ snapshots:
     dependencies:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
+
+  '@directivsys/core-sdk@0.1.10': {}
+
+  '@directivsys/react-sdk@0.1.14(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+    dependencies:
+      '@directivsys/core-sdk': 0.1.10
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
 
   '@emnapi/core@1.10.0':
     dependencies:

@@ -1,0 +1,93 @@
+{
+  "platformClient": {
+    "desiredClientName": "harborview-assistant",
+    "conversationStateMode": "ClientManaged",
+    "ephemeralSequentialStateTtlMinutes": 30,
+    "retentionBoundary": "Harborview owns documents and transcript events. Directiv receives at most ten ordered client-owned events and holds only encrypted, short-lived sequential state."
+  },
+  "tools": [
+    {
+      "toolName": "set_local_registration_field",
+      "description": "Set one user-confirmed field in the visitor browser-local registration draft. This does not create a patient, registration, intake, hold, or appointment.",
+      "isReadOnly": false,
+      "supportsZeroResultStrategy": false,
+      "parameters": [
+        { "parameterName": "field", "parameterType": "string", "description": "Approved local registration field name.", "isRequired": true },
+        { "parameterName": "value", "parameterType": "string", "description": "User-confirmed value to place in the browser-local draft.", "isRequired": true }
+      ]
+    },
+    {
+      "toolName": "search_recognition_availability",
+      "description": "Find currently available administrative recognition appointment times by specialty. This only browses availability and does not hold or book a time.",
+      "isReadOnly": true,
+      "supportsZeroResultStrategy": true,
+      "maxStrategyFallbackAttempts": 2,
+      "parameters": [
+        { "parameterName": "specialty", "parameterType": "string", "description": "Requested Harborview specialty.", "isRequired": true, "enumValues": ["Family Medicine", "Pediatrics", "Women’s Health", "Dermatology"] },
+        { "parameterName": "timePreference", "parameterType": "string", "description": "Optional time preference.", "isRequired": false, "enumValues": ["Morning", "Afternoon"] }
+      ]
+    },
+    {
+      "toolName": "get_my_appointments",
+      "description": "Return appointment records owned by the authenticated patient in the active Harborview actor context.",
+      "isReadOnly": true,
+      "supportsZeroResultStrategy": false,
+      "parameters": []
+    },
+    {
+      "toolName": "get_my_laboratory_result_status",
+      "description": "Return only the authenticated patient’s laboratory release status and available portal link. Never request or provide result interpretation.",
+      "isReadOnly": true,
+      "supportsZeroResultStrategy": false,
+      "parameters": []
+    },
+    {
+      "toolName": "get_my_document_requests",
+      "description": "Return only the authenticated patient’s open administrative document requests.",
+      "isReadOnly": true,
+      "supportsZeroResultStrategy": false,
+      "parameters": []
+    },
+    {
+      "toolName": "request_my_appointment",
+      "description": "Submit an authenticated patient’s selected appointment time as an administrative staff-review request. Never claim confirmation without a success result.",
+      "isReadOnly": false,
+      "supportsZeroResultStrategy": false,
+      "parameters": [
+        { "parameterName": "slotId", "parameterType": "string", "description": "Selected available Harborview appointment slot identifier.", "isRequired": true },
+        { "parameterName": "appointmentType", "parameterType": "string", "description": "Administrative appointment type requested by the patient.", "isRequired": true }
+      ]
+    },
+    {
+      "toolName": "review_registration_draft_duplicates",
+      "description": "For a receptionist only, identify possible existing-patient matches for a reviewed registration draft. Results require human identity confirmation.",
+      "isReadOnly": true,
+      "supportsZeroResultStrategy": false,
+      "parameters": [
+        { "parameterName": "draftId", "parameterType": "string", "description": "Reviewed Harborview registration draft identifier.", "isRequired": true }
+      ]
+    },
+    {
+      "toolName": "create_reception_intake_from_draft",
+      "description": "For a receptionist only, create or match a patient and create a recognition intake from a reviewed Harborview draft. This requires a prior staff confirmation in the Harborview interface.",
+      "isReadOnly": false,
+      "supportsZeroResultStrategy": false,
+      "parameters": [
+        { "parameterName": "draftId", "parameterType": "string", "description": "Reviewed registration draft identifier.", "isRequired": true },
+        { "parameterName": "requestedSpecialty", "parameterType": "string", "description": "Recognition specialty requested.", "isRequired": true, "enumValues": ["Family Medicine", "Pediatrics", "Women’s Health", "Dermatology"] },
+        { "parameterName": "selectedExistingPatientId", "parameterType": "string", "description": "Optional receptionist-confirmed duplicate match identifier.", "isRequired": false }
+      ]
+    },
+    {
+      "toolName": "book_recognition_appointment",
+      "description": "For a receptionist only, book the selected recognition appointment after explicit staff confirmation in Harborview. Never infer confirmation from a prior message.",
+      "isReadOnly": false,
+      "supportsZeroResultStrategy": false,
+      "parameters": [
+        { "parameterName": "patientId", "parameterType": "string", "description": "Reception-confirmed Harborview patient identifier.", "isRequired": true },
+        { "parameterName": "intakeCaseId", "parameterType": "string", "description": "Recognition intake identifier.", "isRequired": true },
+        { "parameterName": "slotId", "parameterType": "string", "description": "Selected available appointment slot identifier.", "isRequired": true }
+      ]
+    }
+  ]
+}
