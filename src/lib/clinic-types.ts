@@ -29,6 +29,19 @@ export type Appointment = {
   staffReviewRequired: boolean;
 };
 
+export type AppointmentDetail = Appointment & {
+  patientId?: string;
+  resourceType?: string;
+  resourceId?: string;
+  patientVisibleStatus?: string;
+  appointmentType?: string;
+  reasonCategory?: string;
+  createdBy?: string;
+  createdAtUtc?: string;
+  holdExpiresAtUtc?: string;
+  slot?: AppointmentSlot;
+};
+
 export type IntakeCase = {
   id: string;
   requestedSpecialty: string;
@@ -98,6 +111,11 @@ export type PatientDocumentRequest = {
   patientVisibleLabel: string;
   status: string;
   dueAtUtc?: string;
+};
+
+export type ReceptionIntakeDetail = {
+  intake: IntakeCase;
+  patient: Pick<Patient, "id" | "displayName" | "registrationStatus"> | null;
 };
 
 export type ClientManagedEvent = {
