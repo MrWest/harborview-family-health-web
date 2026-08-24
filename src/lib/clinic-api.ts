@@ -1,4 +1,4 @@
-import type { Appointment, AppointmentSlot, ClientManagedEvent, DashboardOverview, DemoActor, ExtractedDocument, IntakeCase, LaboratoryResultRelease, LaboratoryService, Patient, PatientDocumentRequest, Provider, RegistrationDraft, WorkflowBlocked } from "./clinic-types";
+import type { Appointment, AppointmentDetail, AppointmentSlot, ClientManagedEvent, DashboardOverview, DemoActor, ExtractedDocument, IntakeCase, LaboratoryResultRelease, LaboratoryService, Patient, PatientDocumentRequest, Provider, ReceptionIntakeDetail, RegistrationDraft, WorkflowBlocked } from "./clinic-types";
 
 const baseUrl = process.env.NEXT_PUBLIC_HARBORVIEW_API_URL ?? "https://harborview-family-health-api-14089992360.us-central1.run.app";
 
@@ -75,8 +75,15 @@ export const clinicApi = {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ patientId, intakeCaseId, slotId, reasonCategory: "Recognition", staffConfirmation: true }),
   }, actor),
   getMyAppointments: (actor: DemoActor) => request<Appointment[]>("/api/workflows/patient/me/appointments", undefined, actor),
+  getMyAppointmentDetail: (appointmentId: string, actor: DemoActor) => request<AppointmentDetail>(`/api/workflows/patient/me/appointments/${encodeURIComponent(appointmentId)}`, undefined, actor),
   getMyLaboratoryResults: (actor: DemoActor) => request<LaboratoryResultRelease[]>("/api/workflows/patient/me/laboratory-results", undefined, actor),
+  getMyLaboratoryResultDetail: (resultReleaseId: string, actor: DemoActor) => request<LaboratoryResultRelease>(`/api/workflows/patient/me/laboratory-results/${encodeURIComponent(resultReleaseId)}`, undefined, actor),
   getMyDocumentRequests: (actor: DemoActor) => request<PatientDocumentRequest[]>("/api/workflows/patient/me/document-requests", undefined, actor),
+  getMyDocumentRequestDetail: (documentRequestId: string, actor: DemoActor) => request<PatientDocumentRequest>(`/api/workflows/patient/me/document-requests/${encodeURIComponent(documentRequestId)}`, undefined, actor),
+  getReceptionDraftDetail: (draftId: string, actor: DemoActor) => request<RegistrationDraft>(`/api/workflows/registration-drafts/${encodeURIComponent(draftId)}`, undefined, actor),
+  getReceptionPatientDetail: (patientId: string, actor: DemoActor) => request<Patient>(`/api/workflows/reception/patients/${encodeURIComponent(patientId)}`, undefined, actor),
+  getReceptionIntakeDetail: (intakeCaseId: string, actor: DemoActor) => request<ReceptionIntakeDetail>(`/api/workflows/reception/intakes/${encodeURIComponent(intakeCaseId)}`, undefined, actor),
+  getReceptionAppointmentDetail: (appointmentId: string, actor: DemoActor) => request<AppointmentDetail>(`/api/workflows/reception/appointments/${encodeURIComponent(appointmentId)}`, undefined, actor),
   requestMyAppointment: (slotId: string, appointmentType: string, actor: DemoActor) => request<Appointment>("/api/workflows/patient/me/appointment-requests", {
     method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ slotId, appointmentType, confirmationAcknowledged: true }),
   }, actor),

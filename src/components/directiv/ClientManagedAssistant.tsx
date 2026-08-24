@@ -1,10 +1,12 @@
 "use client";
 
 import { useMemo } from "react";
+import { usePathname, useRouter } from "next/navigation";
 import { Bot, ShieldCheck } from "lucide-react";
 import { DirectivSysChatbox, DirectivSysProvider, type OnIntentDetected, type ToolCall, type ToolResult } from "@directivsys/react-sdk";
 import { ClinicApiError, clinicApi } from "@/lib/clinic-api";
 import type { DemoActor } from "@/lib/clinic-types";
+import { ASSISTANT_RECORD_ROUTES, ASSISTANT_VIEW_ROUTES, isNavigationDestination, isNavigationRecordType, isSafeHarborviewRecordId } from "@/lib/assistant-navigation";
 
 type AssistantProps = {
   actor: DemoActor;
@@ -30,6 +32,8 @@ function slotItems(slots: Array<{ id: string; resourceId: string; startsAtUtc: s
 
 export function ClientManagedAssistant({ actor, conversationId, pageName }: AssistantProps) {
   const apiKey = process.env.NEXT_PUBLIC_DIRECTIVSYS_API_KEY;
+  const router = useRouter();
+  const pathname = usePathname();
   const history = useMemo(() => ({
     load: async () => {
       const events = await clinicApi.getConversationEvents(conversationId, actor);
@@ -68,6 +72,26 @@ export function ClientManagedAssistant({ actor, conversationId, pageName }: Assi
           window.localStorage.setItem(storageKey, JSON.stringify(next));
           window.dispatchEvent(new CustomEvent("harborview:visitor-draft-updated", { detail: next }));
           return { status: "success", summary: `Updated the local visitor draft field '${field}'. No patient, registration, or appointment was created.`, detailed_data: { field, persisted: false } };
+        }
+        case "navigate_to_view": {
+          const destination = typeof toolCall.parameters.destination === "string" ? toolCall.parameters.destination : "";
+          if (!isNavigationDestination(destination)) return blocked("NAVIGATION_DESTINATION_INVALID: Harborview could not match that request to an approved internal view.");
+          const route = ASSISTANT_VIEW_ROUTES[destination];
+          if (route.actor !== actor.mode) return blocked("NAVIGATION_ACCESS_DENIED: That view is not available in the current Harborview actor lane.");
+          if (pathname === route.pathname) return { status: "success", summary: `The ${route.label} view is already open.`, detailed_data: { destination, pathname: route.pathname, navigationStatus: "already_open" } };
+          router.push(route.pathname);
+          return { status: "success", summary: `Navigation to the ${route.label} view has been initiated.`, detailed_data: { destination, pathname: route.pathname, navigationStatus: "initiated" } };
+        }
+        case "navigate_to_record": {
+          const recordType = typeof toolCall.parameters.recordType === "string" ? toolCall.parameters.recordType : "";
+          const recordId = typeof toolCall.parameters.recordId === "string" ? toolCall.parameters.recordId.trim() : "";
+          if (!isNavigationRecordType(recordType)) return blocked("RECORD_NAVIGATION_TYPE_INVALID: Harborview could not match that request to an approved record detail view.");
+          if (!isSafeHarborviewRecordId(recordId)) return blocked("RECORD_NAVIGATION_ID_INVALID: A valid Harborview record identifier is required before navigation can begin.");
+          const route = ASSISTANT_RECORD_ROUTES[recordType];
+          if (route.actor !== actor.mode) return blocked("NAVIGATION_ACCESS_DENIED: That record type is not available in the current Harborview actor lane.");
+          const targetPath = route.pathname(recordId);
+          router.push(targetPath);
+          return { status: "success", summary: `Navigation to the requested ${route.label} has been initiated.`, detailed_data: { recordType, recordId, pathname: targetPath, navigationStatus: "initiated" } };
         }
         case "search_recognition_availability": {
           const specialty = typeof toolCall.parameters.specialty === "string" ? toolCall.parameters.specialty : "Family Medicine";
@@ -127,7 +151,7 @@ export function ClientManagedAssistant({ actor, conversationId, pageName }: Assi
     } catch (error) {
       return toToolError(error);
     }
-  }, [actor]);
+  }, [actor, pathname, router]);
 
   if (!apiKey) {
     return <aside className="fixed bottom-5 right-5 z-50 hidden max-w-xs border border-[#102b3d]/12 bg-[#f7f7f2] p-4 shadow-xl md:block"><div className="flex gap-3"><ShieldCheck size={19} className="mt-0.5 shrink-0 text-[#277579]"/><p className="text-xs leading-5 text-[#102b3d]/70"><strong className="text-[#102b3d]">Directiv client-managed proof ready.</strong> The live assistant appears after <code>NEXT_PUBLIC_DIRECTIVSYS_API_KEY</code> is configured. Harborview remains the transcript and document owner.</p></div></aside>;
@@ -135,7 +159,7 @@ export function ClientManagedAssistant({ actor, conversationId, pageName }: Assi
 
   return <DirectivSysProvider apiKey={apiKey} config={{ timeout: 30000 }}><DirectivSysChatbox
     onIntentDetected={onIntentDetected}
-    currentContext={{ userId: actor.id, userName: actor.mode, userPreferences: `Actor lane: ${actor.mode}. Visitor: local draft and availability only; no persistent registration, holds, or booking. Active patient: own appointments, released-result status/link only, document requests, and appointment requests; never repeat intake. Receptionist: reviewed-draft duplicate review, patient/intake creation, availability search, and staff-confirmed recognition booking.`, interfaceState: { currentPageName: pageName, currentPageDescription: "Administrative coordination only. Harborview owns documents and transcript; document uploads never go to Directiv. No clinical interpretation, triage, diagnosis, urgency, or treatment advice." } }}
+    currentContext={{ userId: actor.id, userName: actor.mode, userPreferences: `Actor lane: ${actor.mode}. Visitor: local draft and availability only; no persistent registration, holds, or booking. Active patient: own appointments, released-result status/link only, document requests, and appointment requests; never repeat intake. Receptionist: reviewed-draft duplicate review, patient/intake creation, availability search, and staff-confirmed recognition booking.`, interfaceState: { currentPageName: pageName, currentPageDescription: `Current internal route: ${pathname}. Administrative coordination only. Harborview owns documents and transcript; document uploads never go to Directiv. No clinical interpretation, triage, diagnosis, urgency, or treatment advice.` } }}
     conversation={{ mode: "clientManaged", conversationId, contextWindow: 10, history, clearEphemeralStateOnEnd: true }}
     renderMode="standard" defaultOpen={false} boxLocation="bottom-right" titleText="Harborview assistant" titleIcon={<Bot size={17}/>} headerBgColor="#102b3d" titleTextColor="#ffffff"
     placeholder="Ask about administrative next steps…" width="390px" height="540px"

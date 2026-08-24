@@ -88,6 +88,25 @@
         { "parameterName": "intakeCaseId", "parameterType": "string", "description": "Recognition intake identifier.", "isRequired": true },
         { "parameterName": "slotId", "parameterType": "string", "description": "Selected available appointment slot identifier.", "isRequired": true }
       ]
+    },
+    {
+      "toolName": "navigate_to_view",
+      "description": "Navigate the current Harborview browser session to an actor-authorized internal application view. Use only when the user explicitly asks to open, show, go to, or be taken to a Harborview screen. This only initiates client-side navigation and does not retrieve medical data or modify any record.",
+      "isReadOnly": false,
+      "supportsZeroResultStrategy": false,
+      "parameters": [
+        { "parameterName": "destination", "parameterType": "string", "description": "Named Harborview view requested by the user. Select only a destination allowed for the current actor lane.", "isRequired": true, "enumValues": ["visitor_registration", "visitor_registration_review", "patient_overview", "patient_appointments", "patient_results", "patient_documents", "reception_dashboard", "reception_intake", "reception_new_intake", "reception_patients", "reception_schedule", "reception_laboratory"] }
+      ]
+    },
+    {
+      "toolName": "navigate_to_record",
+      "description": "Navigate the current Harborview browser session to an actor-authorized administrative record detail view. Use only when the user explicitly asks to see or open a specific record and its exact identifier appeared in a prior authorized Harborview tool result. This only initiates client-side navigation and does not retrieve or modify the record.",
+      "isReadOnly": false,
+      "supportsZeroResultStrategy": false,
+      "parameters": [
+        { "parameterName": "recordType", "parameterType": "string", "description": "Harborview record category to open. Select only a record type permitted to the current actor lane.", "isRequired": true, "enumValues": ["patient_appointment", "laboratory_result_release", "patient_document_request", "registration_draft", "patient_profile", "intake_case", "reception_appointment"] },
+        { "parameterName": "recordId", "parameterType": "string", "description": "Exact Harborview record identifier returned by a prior authorized Harborview tool result. Never invent, transform, or request a record identifier from the user.", "isRequired": true }
+      ]
     }
   ]
 }
