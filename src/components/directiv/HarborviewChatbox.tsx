@@ -1,4 +1,4 @@
-// Design: This presentation adapter connects the published SDK to Harborview-owned callbacks while keeping tool policy and transcript persistence in dedicated feature modules
+// Design: This presentation adapter connects the published SDK to Harborview-owned callbacks while keeping tool policy and transcript persistence in dedicated feature modules.
 import { Bot } from "lucide-react";
 import { DirectivSysChatbox, DirectivSysProvider, type CurrentContext, type OnIntentDetected } from "@directivsys/react-sdk";
 import type { ClientManagedAssistantProps } from "@/features/directiv/types";
