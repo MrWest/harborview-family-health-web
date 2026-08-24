@@ -58,6 +58,7 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   return <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#277579]">{children}</p>;
 }
 
+// --- HOME PAGE ---
 export default function Home() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-[#f7f7f2] text-[#102b3d]">
