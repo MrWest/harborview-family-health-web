@@ -80,10 +80,10 @@ export default function Home() {
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(9,35,52,.95)_0%,rgba(9,35,52,.83)_39%,rgba(9,35,52,.28)_76%,rgba(9,35,52,.18)_100%)]" />
         <div className="absolute inset-x-0 bottom-0 h-44 bg-gradient-to-t from-[#102b3d] to-transparent" />
 
-        <div className="relative mx-auto flex min-h-[720px] max-w-7xl items-end px-5 pb-20 pt-32 lg:px-8 lg:pb-24">
+        <div className="relative mx-auto flex min-h-[720px] max-w-7xl items-center px-5 pb-20 pt-32 lg:px-8 lg:pb-24">
           <div className="max-w-3xl">
             <p className="text-xs font-bold uppercase tracking-[0.26em] text-[#a9d9cf]">Harborview Family Health Centre</p>
-            <h1 className="mt-6 font-serif text-5xl leading-[0.94] tracking-[-0.05em] sm:text-7xl lg:text-8xl">
+            <h1 className="mt-6 font-serif text-5xl leading-[1.04] tracking-[-0.05em] sm:text-7xl lg:text-[94px]">
               Clear coordination is
               <em className="block font-normal text-[#a9d9cf]"> part of good care.</em>
             </h1>
