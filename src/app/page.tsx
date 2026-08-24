@@ -89,15 +89,19 @@ export default function Home() {
               <em className="block font-normal text-[#a9d9cf]"> part of good care.</em>
             </h1>
             <p className="mt-7 max-w-2xl text-lg leading-8 text-white/78 sm:text-xl">
-              Harborview gives patients a simpler start and gives reception teams one practical view of intake, documents, appointments, and next steps.
+              Harborview gives new patients a simpler start and gives reception teams one practical view of intake, documents, appointments, and next steps.
             </p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-              <Link href="/patient" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-[#102b3d] transition hover:bg-[#dcece7]">
-                I am a patient <ArrowRight size={16} />
+              <Link href="/register" className="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3.5 text-sm font-semibold text-[#102b3d] transition hover:bg-[#dcece7]">
+                Register as a new patient <ArrowRight size={16} />
               </Link>
-              <Link href="/reception" className="inline-flex items-center justify-center gap-2 rounded-full border border-white/35 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/18">
-                Open reception workspace <ArrowRight size={16} />
+              <Link href="/patient" className="inline-flex items-center justify-center gap-2 rounded-full border border-white/35 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur-sm transition hover:bg-white/18">
+                I already have a patient portal <ArrowRight size={16} />
               </Link>
+            </div>
+            <div className="mt-5 flex flex-col gap-2 text-sm text-white/68 sm:flex-row sm:items-center sm:gap-5">
+              <p>Start a local, PDF-assisted registration draft. Submission and booking require verification.</p>
+              <Link href="/reception" className="inline-flex w-fit items-center gap-2 font-semibold text-[#a9d9cf] transition hover:text-white">Reception workspace <ArrowRight size={14} /></Link>
             </div>
           </div>
         </div>
@@ -127,8 +131,8 @@ export default function Home() {
           <p className="mt-6 max-w-md text-lg leading-8 text-[#102b3d]/68">
             The patient portal is designed around the things a person actually needs to do before a visit—not a generic chat window and not a clinical decision tool.
           </p>
-          <Link href="/patient/appointments" className="mt-8 inline-flex items-center gap-2 text-sm font-bold text-[#277579] underline decoration-[#a9d9cf] decoration-2 underline-offset-8">
-            Begin with an appointment request <ArrowRight size={16} />
+          <Link href="/register" className="mt-8 inline-flex items-center gap-2 text-sm font-bold text-[#277579] underline decoration-[#a9d9cf] decoration-2 underline-offset-8">
+            New to Harborview? Begin registration <ArrowRight size={16} />
           </Link>
         </div>
 
