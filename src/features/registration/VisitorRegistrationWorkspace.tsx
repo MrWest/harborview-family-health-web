@@ -3,7 +3,7 @@
 // Design: Harborview’s calm, paper-and-ink administrative experience uses warm neutrals, deep harbor blue, and restrained sea-glass accents; actions remain explicit and human-centred.
 import { ChangeEvent, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Database, FileScan, FileText, LockKeyhole, MessageSquareText, Search, ShieldCheck, ShieldOff, Upload } from "lucide-react";
+import { Database, FileScan, FileText, LockKeyhole, MessageSquareText, Search, ShieldCheck, ShieldOff, Trash2, Upload } from "lucide-react";
 import { ClientManagedAssistantLoader } from "@/components/directiv/ClientManagedAssistantLoader";
 import { clinicApi } from "@/lib/clinic-api";
 import type { AppointmentSlot, ExtractedDocument } from "@/lib/clinic-types";
@@ -103,6 +103,7 @@ export function VisitorRegistrationWorkspace() {
   const [notice, setNotice] = useState<string | null>(null);
   const [slots, setSlots] = useState<AppointmentSlot[]>([]);
   const [findingSlots, setFindingSlots] = useState(false);
+  const [clearConfirmationOpen, setClearConfirmationOpen] = useState(false);
 
   useEffect(() => {
     const saved = window.localStorage.getItem(storageKey);
@@ -113,7 +114,13 @@ export function VisitorRegistrationWorkspace() {
     window.addEventListener("harborview:visitor-draft-updated", receiveAssistantDraftUpdate);
     return () => window.removeEventListener("harborview:visitor-draft-updated", receiveAssistantDraftUpdate);
   }, []);
-  useEffect(() => window.localStorage.setItem(storageKey, JSON.stringify(draft)), [draft]);
+  useEffect(() => {
+    const hasLocalDraftData = Object.values(draft.fields).some((value) => value.trim().length > 0)
+      || (draft.extractedFields?.length ?? 0) > 0
+      || Boolean(draft.sourceDocumentId);
+    if (hasLocalDraftData) window.localStorage.setItem(storageKey, JSON.stringify(draft));
+    else window.localStorage.removeItem(storageKey);
+  }, [draft]);
 
   const missing = useMemo(() => requiredFields.filter((field) => !draft.fields[field]?.trim()), [draft.fields]);
   const candidateFields = new Set(draft.extractedFields ?? []);
@@ -158,6 +165,17 @@ export function VisitorRegistrationWorkspace() {
     finally { setFindingSlots(false); }
   }
 
+  function clearLocalForm() {
+    const clearedDraft: LocalDraft = { fields: {}, extractedFields: [] };
+    window.localStorage.removeItem(storageKey);
+    setDraft(clearedDraft);
+    setUploadState("idle");
+    setNotice("Your browser-local form and PDF candidate labels were cleared. No patient, registration, intake, appointment, PDF, or Harborview record was deleted because none was created.");
+    setSlots([]);
+    setClearConfirmationOpen(false);
+    window.dispatchEvent(new CustomEvent("harborview:visitor-draft-updated", { detail: clearedDraft }));
+  }
+
   return <main className="min-h-screen bg-[#f7f7f2] text-[#102b3d]">
     <header className="border-b border-[#102b3d]/10 bg-white"><div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 lg:px-8"><Link className="font-serif text-2xl tracking-[-.03em]" href="/">Harborview <span className="text-[#277579]">Family Health</span></Link><Link href="/patient" className="text-sm font-semibold text-[#277579]">Already a patient?</Link></div></header>
     <div className="mx-auto grid max-w-7xl gap-10 px-5 py-12 lg:grid-cols-[1.45fr_.55fr] lg:px-8 lg:py-16">
@@ -187,7 +205,8 @@ export function VisitorRegistrationWorkspace() {
             </div>
           </section>)}
         </div>
-        <div className="mt-10 flex flex-wrap gap-3"><button onClick={() => void browseAvailability()} disabled={findingSlots} className="inline-flex items-center gap-2 bg-[#102b3d] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"><Search size={16}/>{findingSlots ? "Checking availability…" : "Browse recognition availability"}</button><Link href="/register/review" className="inline-flex items-center gap-2 border border-[#102b3d]/20 bg-white px-5 py-3 text-sm font-semibold">Review local draft <FileText size={16}/></Link></div>
+        <div className="mt-10 flex flex-wrap gap-3"><button onClick={() => void browseAvailability()} disabled={findingSlots} className="inline-flex items-center gap-2 bg-[#102b3d] px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"><Search size={16}/>{findingSlots ? "Checking availability…" : "Browse recognition availability"}</button><Link href="/register/review" className="inline-flex items-center gap-2 border border-[#102b3d]/20 bg-white px-5 py-3 text-sm font-semibold">Review local draft <FileText size={16}/></Link><button type="button" onClick={() => setClearConfirmationOpen(true)} className="inline-flex items-center gap-2 border border-red-800/25 bg-white px-5 py-3 text-sm font-semibold text-red-800"><Trash2 size={16}/>Clear local form</button></div>
+        {clearConfirmationOpen && <section className="mt-4 border border-red-800/25 bg-red-50 p-5" aria-live="polite"><p className="font-semibold text-red-950">Clear this browser-local form?</p><p className="mt-1 max-w-2xl text-sm leading-6 text-red-950/72">This removes the values and PDF candidate markers prepared in this browser only. It does not delete a patient, registration, intake, appointment, PDF, or any Harborview record because visitor information has not been submitted.</p><div className="mt-4 flex flex-wrap gap-3"><button type="button" onClick={clearLocalForm} className="bg-red-800 px-4 py-2 text-sm font-semibold text-white">Yes, clear local form</button><button type="button" onClick={() => setClearConfirmationOpen(false)} className="border border-red-800/25 bg-white px-4 py-2 text-sm font-semibold text-red-900">Keep my form</button></div></section>}
         {slots.length > 0 && <div className="mt-5 grid gap-3 sm:grid-cols-2">{slots.slice(0, 4).map((slot) => <div className="border border-[#102b3d]/12 bg-white p-4" key={slot.id}><p className="font-serif text-lg">{formatAppointmentTime(slot.startsAtUtc)}</p><p className="mt-2 text-xs leading-5 text-[#102b3d]/60">Available to browse. Signing in and confirmation are required before Harborview can request or book a time.</p></div>)}</div>}
       </section>
       <aside className="h-fit border border-[#102b3d]/10 bg-[#102b3d] p-7 text-white lg:sticky lg:top-8"><p className="text-xs font-bold uppercase tracking-[.22em] text-[#a9d9cf]">Local form status</p><h2 className="mt-3 font-serif text-3xl">{missing.length ? `${missing.length} required item${missing.length === 1 ? "" : "s"} still needed` : "Ready for verification"}</h2><p className="mt-3 text-sm leading-6 text-white/67">This browser retains your local form for this proof. A visitor can prepare information and browse availability, but cannot create a patient account, persist an intake, hold a slot, or book an appointment.</p><ul className="mt-7 space-y-3 text-sm">{requiredFields.map((field) => <li className="flex items-center justify-between border-b border-white/10 pb-3" key={field}><span>{field.replace(/([A-Z])/g, " $1")}</span><span className={draft.fields[field] ? "text-[#a9d9cf]" : "text-white/42"}>{draft.fields[field] ? "Prepared" : "Needed"}</span></li>)}</ul><div className="mt-7 border border-white/15 bg-white/8 p-4 text-xs leading-5 text-white/65"><LockKeyhole className="mb-2 text-[#a9d9cf]" size={17}/>To save this information as a registration, Harborview needs a signed-in or verified identity and a staff-confirmed intake process.</div></aside>
