@@ -20,7 +20,10 @@ import {
   ShieldCheck,
   X,
 } from "lucide-react";
-import { HARBORVIEW_PROOF_SCENARIOS, type ProofGuideScenario } from "@/data/harborviewProofGuide";
+import {
+  HARBORVIEW_PROOF_SCENARIOS,
+  type ProofGuideScenario,
+} from "@/data/harborviewProofGuide";
 
 const DISMISS_KEY = "harborview-proof-guide-v1-dismissed";
 const AUTO_OPEN_DELAY_MS = 4000;
@@ -99,21 +102,32 @@ function GuideVisual({ scenario }: { scenario: ProofGuideScenario }) {
     <div className="border border-[#102b3d]/10 bg-[#102b3d] px-5 py-5 text-white">
       <div className="flex items-center gap-3 border-b border-white/12 pb-4">
         {visual.kind === "services" ? (
-          <CircleUserRound className="text-[#a9d9cf]" size={20} aria-hidden="true" />
+          <CircleUserRound
+            className="text-[#a9d9cf]"
+            size={20}
+            aria-hidden="true"
+          />
         ) : (
           <Compass className="text-[#a9d9cf]" size={20} aria-hidden="true" />
         )}
-        <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#a9d9cf]">{visual.title}</p>
+        <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#a9d9cf]">
+          {visual.title}
+        </p>
       </div>
       <div className="divide-y divide-white/12">
         {visual.items.map((item, index) => (
-          <div className="grid grid-cols-[32px_1fr] gap-3 py-3.5" key={item.label}>
+          <div
+            className="grid grid-cols-[32px_1fr] gap-3 py-3.5"
+            key={item.label}
+          >
             <span className="grid h-7 w-7 place-items-center rounded-full bg-[#a9d9cf] text-xs font-bold text-[#102b3d]">
               {index + 1}
             </span>
             <div>
               <p className="text-sm font-bold">{item.label}</p>
-              <p className="mt-1 text-xs leading-5 text-white/65">{item.detail}</p>
+              <p className="mt-1 text-xs leading-5 text-white/65">
+                {item.detail}
+              </p>
             </div>
           </div>
         ))}
@@ -162,7 +176,8 @@ export function HarborviewProofGuide() {
     autoOpenTimerRef.current = window.setTimeout(openGuide, AUTO_OPEN_DELAY_MS);
     return () => {
       window.clearTimeout(readyTimer);
-      if (autoOpenTimerRef.current) window.clearTimeout(autoOpenTimerRef.current);
+      if (autoOpenTimerRef.current)
+        window.clearTimeout(autoOpenTimerRef.current);
     };
   }, [openGuide]);
 
@@ -177,7 +192,9 @@ export function HarborviewProofGuide() {
 
     const panel = panelRef.current;
     const initialFocus = panel?.querySelector<HTMLElement>("button, a[href]");
-    const focusFrame = window.requestAnimationFrame(() => initialFocus?.focus());
+    const focusFrame = window.requestAnimationFrame(() =>
+      initialFocus?.focus(),
+    );
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -215,12 +232,20 @@ export function HarborviewProofGuide() {
   }, [closeGuide, isOpen]);
 
   function chooseScenario(index: number, focusTab = false) {
-    const wrappedIndex = (index + HARBORVIEW_PROOF_SCENARIOS.length) % HARBORVIEW_PROOF_SCENARIOS.length;
+    const wrappedIndex =
+      (index + HARBORVIEW_PROOF_SCENARIOS.length) %
+      HARBORVIEW_PROOF_SCENARIOS.length;
     setScenarioIndex(wrappedIndex);
-    if (focusTab) window.requestAnimationFrame(() => tabRefs.current[wrappedIndex]?.focus());
+    if (focusTab)
+      window.requestAnimationFrame(() =>
+        tabRefs.current[wrappedIndex]?.focus(),
+      );
   }
 
-  function handleTabKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+  function handleTabKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) {
     if (event.key === "ArrowRight") {
       event.preventDefault();
       chooseScenario(index + 1, true);
@@ -247,7 +272,9 @@ export function HarborviewProofGuide() {
         setCopyAnnouncement("");
       }, 1800);
     } catch {
-      setCopyAnnouncement("Clipboard access was unavailable. Select and copy the prompt manually.");
+      setCopyAnnouncement(
+        "Clipboard access was unavailable. Select and copy the prompt manually.",
+      );
     }
   }
 
@@ -261,7 +288,7 @@ export function HarborviewProofGuide() {
         aria-haspopup="dialog"
         aria-expanded={isOpen}
         aria-controls="harborview-proof-guide"
-        className="fixed bottom-5 left-4 z-40 inline-flex items-center gap-2 rounded-full border border-[#a9d9cf]/70 bg-[#102b3d] px-4 py-3 text-xs font-bold uppercase tracking-[0.16em] text-white shadow-[0_12px_32px_rgba(16,43,61,.28)] transition duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#1d5267] active:scale-[.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a9d9cf] motion-reduce:transform-none motion-reduce:transition-none"
+        className="fixed bottom-5 left-4 z-40 inline-flex items-center gap-2 rounded-full border border-[#a9d9cf]/70 bg-[#102b3d] px-4 py-3 !text-sm font-bold tracking-[0.16em] text-white shadow-[0_12px_32px_rgba(16,43,61,.28)] transition duration-200 ease-out hover:-translate-y-0.5 hover:bg-[#1d5267] active:scale-[.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#a9d9cf] motion-reduce:transform-none motion-reduce:transition-none"
       >
         <Compass size={16} className="text-[#a9d9cf]" aria-hidden="true" />
         Test this proof
@@ -269,7 +296,9 @@ export function HarborviewProofGuide() {
 
       <div
         className={`fixed inset-0 z-50 transition-[opacity,visibility] duration-300 ease-[cubic-bezier(.23,1,.32,1)] motion-reduce:transition-none ${
-          isOpen ? "visible opacity-100" : "invisible pointer-events-none opacity-0"
+          isOpen
+            ? "visible opacity-100"
+            : "invisible pointer-events-none opacity-0"
         }`}
         aria-hidden={!isOpen}
         inert={!isOpen}
@@ -294,8 +323,13 @@ export function HarborviewProofGuide() {
           <header className="sticky top-0 z-10 border-b border-[#102b3d]/10 bg-[#f7f7f2]/96 px-5 pt-5 backdrop-blur sm:px-6">
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#277579]">Harborview live proof</p>
-                <h2 id="harborview-proof-guide-title" className="mt-2 font-serif text-3xl leading-none tracking-[-0.035em]">
+                <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-[#277579]">
+                  Harborview live proof
+                </p>
+                <h2
+                  id="harborview-proof-guide-title"
+                  className="mt-2 font-serif text-3xl leading-none tracking-[-0.035em]"
+                >
                   A short guide to testing the flow.
                 </h2>
               </div>
@@ -308,7 +342,11 @@ export function HarborviewProofGuide() {
                 <X size={18} />
               </button>
             </div>
-            <div className="mt-5 grid grid-cols-2 gap-x-5 pt-1" role="tablist" aria-label="Proof testing scenarios">
+            <div
+              className="mt-5 grid grid-cols-2 gap-x-5 pt-1"
+              role="tablist"
+              aria-label="Proof testing scenarios"
+            >
               {HARBORVIEW_PROOF_SCENARIOS.map((item, index) => (
                 <button
                   key={item.id}
@@ -345,9 +383,15 @@ export function HarborviewProofGuide() {
           >
             <GuideVisual scenario={scenario} />
 
-            <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-[#277579]">{scenario.eyebrow}</p>
-            <h3 className="mt-2 font-serif text-3xl leading-[1.02] tracking-[-0.035em]">{scenario.title}</h3>
-            <p className="mt-4 text-sm leading-6 text-[#102b3d]/70">{scenario.setup}</p>
+            <p className="mt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-[#277579]">
+              {scenario.eyebrow}
+            </p>
+            <h3 className="mt-2 font-serif text-3xl leading-[1.02] tracking-[-0.035em]">
+              {scenario.title}
+            </h3>
+            <p className="mt-4 text-sm leading-6 text-[#102b3d]/70">
+              {scenario.setup}
+            </p>
 
             <Link
               href={scenario.route}
@@ -358,47 +402,71 @@ export function HarborviewProofGuide() {
             </Link>
 
             {scenario.prompts.length > 0 ? (
-              <section className="mt-8" aria-labelledby={`proof-guide-prompts-${scenario.id}`}>
-                <p id={`proof-guide-prompts-${scenario.id}`} className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#277579]">
+              <section
+                className="mt-8"
+                aria-labelledby={`proof-guide-prompts-${scenario.id}`}
+              >
+                <p
+                  id={`proof-guide-prompts-${scenario.id}`}
+                  className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#277579]"
+                >
                   Try these prompts
                 </p>
                 <div className="mt-3 divide-y divide-[#102b3d]/10 border-y border-[#102b3d]/10 bg-white">
                   {scenario.prompts.map((prompt) => (
                     <div key={prompt} className="flex items-start gap-3 py-3">
-                      <p className="flex-1 text-sm leading-5 text-[#102b3d]/80">{prompt}</p>
+                      <p className="flex-1 text-sm leading-5 text-[#102b3d]/80">
+                        {prompt}
+                      </p>
                       <button
                         type="button"
                         onClick={() => void copyPrompt(prompt)}
                         className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#102b3d]/12 text-[#277579] transition duration-200 ease-out hover:bg-[#dcece7] active:scale-[.97] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#277579] motion-reduce:transition-none"
                         aria-label={`Copy prompt: ${prompt}`}
                       >
-                        {copiedPrompt === prompt ? <Check size={16} /> : <Clipboard size={16} />}
+                        {copiedPrompt === prompt ? (
+                          <Check size={16} />
+                        ) : (
+                          <Clipboard size={16} />
+                        )}
                       </button>
                     </div>
                   ))}
                 </div>
-                <p className="sr-only" aria-live="polite">{copyAnnouncement}</p>
+                <p className="sr-only" aria-live="polite">
+                  {copyAnnouncement}
+                </p>
               </section>
             ) : null}
 
             <section className="mt-7 border-l-2 border-[#277579] pl-4">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#277579]">What happens</p>
-              <p className="mt-2 text-sm leading-6 text-[#102b3d]/75">{scenario.expected}</p>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#277579]">
+                What happens
+              </p>
+              <p className="mt-2 text-sm leading-6 text-[#102b3d]/75">
+                {scenario.expected}
+              </p>
             </section>
 
             <section className="mt-5 bg-[#dcece7] p-4">
               <div className="flex gap-2 text-[#277579]">
                 <ShieldCheck size={17} className="mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em]">Boundary to notice</p>
-                  <p className="mt-2 text-sm leading-6 text-[#102b3d]/76">{scenario.boundary}</p>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em]">
+                    Boundary to notice
+                  </p>
+                  <p className="mt-2 text-sm leading-6 text-[#102b3d]/76">
+                    {scenario.boundary}
+                  </p>
                 </div>
               </div>
             </section>
 
             {scenario.referenceDownloads?.length ? (
               <section className="mt-6">
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#277579]">Additional fictional assets</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#277579]">
+                  Additional fictional assets
+                </p>
                 <div className="mt-3 flex flex-wrap gap-2">
                   {scenario.referenceDownloads.map((asset) => (
                     <a
@@ -415,21 +483,29 @@ export function HarborviewProofGuide() {
             ) : null}
 
             <div className="mt-7 flex items-center gap-3 border-t border-[#102b3d]/10 py-5 text-xs leading-5 text-[#102b3d]/58">
-              <CalendarDays size={17} className="shrink-0 text-[#277579]" aria-hidden="true" />
-              All names, records, documents, appointments, and screenshots in this guide are fictional proof data.
+              <CalendarDays
+                size={17}
+                className="shrink-0 text-[#277579]"
+                aria-hidden="true"
+              />
+              All names, records, documents, appointments, and screenshots in
+              this guide are fictional proof data.
             </div>
           </main>
 
-          <footer className="sticky bottom-0 border-t border-[#102b3d]/10 bg-white px-5 py-3 sm:px-6">
+          <footer className="sticky bottom-0 border-t border-[#102b3d]/10 bg-[#050A14] px-5 py-3 sm:px-6">
             <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3">
               <button
                 type="button"
                 onClick={() => chooseScenario(scenarioIndex - 1)}
-                className="inline-flex items-center gap-1 justify-self-start text-xs font-bold text-[#102b3d]/65 transition hover:text-[#277579] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#277579]"
+                className="inline-flex items-center gap-1 justify-self-start !text-xs font-bold text-white transition hover:text-[#277579] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#277579]"
               >
                 <ChevronLeft size={15} /> Previous
               </button>
-              <div className="flex flex-col items-center gap-0.5 sm:flex-row sm:gap-2" aria-label="Powered by DirectivSys">
+              <div
+                className="flex flex-col items-center gap-0.5 sm:flex-row sm:gap-2"
+                aria-label="Powered by DirectivSys"
+              >
                 <Image
                   src="/download/harborview-proof/harborview-proof-guide-vector.gif"
                   alt=""
@@ -439,14 +515,18 @@ export function HarborviewProofGuide() {
                   className="h-11 w-11 object-contain"
                 />
                 <div className="text-center sm:text-left">
-                  <span className="block text-[7px] font-bold uppercase tracking-[0.14em] text-[#102b3d]/42 sm:text-[9px]">Powered by</span>
-                  <strong className="block text-[9px] text-[#102b3d]/70 sm:mt-0.5 sm:text-xs">DirectivSys</strong>
+                  <span className="block text-[7px] font-bold uppercase tracking-[0.14em] text-white sm:text-[9px]">
+                    Powered by
+                  </span>
+                  <strong className="block text-[9px] text-[#00F0FF] sm:mt-0.5 sm:text-xs">
+                    DirectivSys
+                  </strong>
                 </div>
               </div>
               <button
                 type="button"
                 onClick={() => chooseScenario(scenarioIndex + 1)}
-                className="inline-flex items-center gap-1 justify-self-end text-xs font-bold text-[#102b3d]/65 transition hover:text-[#277579] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#277579]"
+                className="inline-flex items-center gap-1 justify-self-end !text-xs font-bold text-white transition hover:text-[#277579] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#277579]"
               >
                 Next <ChevronRight size={15} />
               </button>
