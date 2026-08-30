@@ -9,8 +9,96 @@ import type { Provider } from "@/lib/clinic-types";
 import { useClinicResource } from "@/hooks/use-clinic-resource";
 
 export function SchedulingDesk() {
-  const providers = useClinicResource("scheduling-family-providers", () => clinicApi.getProviders("Family Medicine"), fallbackProviders);
+  const providers = useClinicResource(
+    "scheduling-family-providers",
+    () => clinicApi.getProviders("Family Medicine"),
+    fallbackProviders,
+  );
   const [provider, setProvider] = useState<Provider>(fallbackProviders[0]);
-  const slots = useClinicResource(`scheduling-slots:${provider.id}`, () => clinicApi.getSlots(provider.id), fallbackSlots);
-  return <div className="space-y-7"><div><p className="text-xs font-bold uppercase tracking-[.2em] text-[#277579]">Scheduling desk</p><h1 className="mt-3 font-serif text-5xl tracking-[-.035em]">Coordinate held times and availability.</h1><p className="mt-4 max-w-2xl leading-7 text-[#102b3d]/65">Patient portal requests become holds. Reception confirms administrative readiness before an appointment becomes final.</p></div><div className="grid gap-6 lg:grid-cols-[.72fr_1.28fr]"><aside className="rounded-2xl bg-[#102b3d] p-6 text-white"><UserRound className="text-[#a9d9cf]"/><h2 className="mt-5 font-serif text-3xl">Providers</h2><div className="mt-6 space-y-2">{providers.data.map((item) => <button key={item.id} onClick={() => setProvider(item)} className={`w-full rounded-xl px-4 py-3 text-left text-sm ${provider.id === item.id ? "bg-white text-[#102b3d]" : "bg-white/8 hover:bg-white/15"}`}>{item.displayName}</button>)}</div></aside><section className="rounded-2xl border border-[#102b3d]/10 bg-white p-7"><div className="flex flex-wrap items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[.18em] text-[#277579]">Availability</p><h2 className="mt-2 font-serif text-3xl">{provider.displayName}</h2></div><span className="rounded-full bg-[#dcece7] px-3 py-1 text-xs font-semibold text-[#1a5a5d]">{slots.data.length} visible slots</span></div><div className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">{slots.data.slice(0, 9).map((slot) => <div key={slot.id} className="rounded-xl border border-[#102b3d]/10 p-4"><CalendarDays size={17} className="text-[#277579]"/><strong className="mt-3 block text-sm">{formatAppointmentTime(slot.startsAtUtc)}</strong><span className="mt-1 block text-xs text-[#102b3d]/58">Administrative availability</span></div>)}</div></section></div><div className="grid gap-4 md:grid-cols-2"><div className="rounded-2xl bg-[#dcece7] p-6"><Clock3 className="text-[#277579]"/><h2 className="mt-5 font-serif text-2xl">Hold policy</h2><p className="mt-3 text-sm leading-6 text-[#1a5a5d]">Do not represent a selected time as confirmed until reception completes administrative review.</p></div><div className="rounded-2xl border border-[#102b3d]/10 bg-white p-6"><h2 className="font-serif text-2xl">Rescheduling standard</h2><p className="mt-3 text-sm leading-6 text-[#102b3d]/65">Release the previous hold, select a replacement time, and document the reason through the clinic’s scheduling workflow.</p></div></div></div>;
+  const slots = useClinicResource(
+    `scheduling-slots:${provider.id}`,
+    () => clinicApi.getSlots(provider.id),
+    fallbackSlots,
+  );
+  return (
+    <div className="space-y-7">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-[.2em] text-[#277579]">
+          Scheduling desk
+        </p>
+        <h1 className="mt-3 font-serif text-5xl tracking-[-.035em]">
+          Coordinate held times and availability.
+        </h1>
+        <p className="mt-4 max-w-2xl leading-7 text-[#102b3d]/65">
+          Patient portal requests become holds. Reception confirms
+          administrative readiness before an appointment becomes final.
+        </p>
+      </div>
+      <div className="grid gap-6 lg:grid-cols-[.72fr_1.28fr]">
+        <aside className="rounded-2xl bg-[#102b3d] p-6 text-white">
+          <UserRound className="text-[#a9d9cf]" />
+          <h2 className="mt-5 font-serif text-3xl">Providers</h2>
+          <div className="mt-6 space-y-2">
+            {providers.data.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => setProvider(item)}
+                className={`w-full rounded-xl px-4 py-3 text-left text-sm ${provider.id === item.id ? "bg-white text-[#102b3d]" : "bg-white/8 hover:bg-white/15"}`}
+              >
+                {item.displayName}
+              </button>
+            ))}
+          </div>
+        </aside>
+        <section className="rounded-2xl border border-[#102b3d]/10 bg-white p-7">
+          <div className="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-[.18em] text-[#277579]">
+                Availability
+              </p>
+              <h2 className="mt-2 font-serif text-3xl">
+                {provider.displayName}
+              </h2>
+            </div>
+            <span className="rounded-full bg-[#dcece7] px-3 py-1 text-xs font-semibold text-[#1a5a5d]">
+              {slots.data.length} visible slots
+            </span>
+          </div>
+          <div className="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {slots.data.slice(0, 9).map((slot) => (
+              <div
+                key={slot.id}
+                className="rounded-xl border border-[#102b3d]/10 p-4"
+              >
+                <CalendarDays size={17} className="text-[#277579]" />
+                <strong className="mt-3 block text-sm">
+                  {formatAppointmentTime(slot.startsAtUtc)}
+                </strong>
+                <span className="mt-1 block text-xs text-[#102b3d]/58">
+                  Administrative availability
+                </span>
+              </div>
+            ))}
+          </div>
+        </section>
+      </div>
+      <div className="grid gap-4 md:grid-cols-2">
+        <div className="rounded-2xl bg-[#dcece7] p-6">
+          <Clock3 className="text-[#277579]" />
+          <h2 className="mt-5 font-serif text-2xl">Hold policy</h2>
+          <p className="mt-3 text-sm leading-6 text-[#1a5a5d]">
+            Do not represent a selected time as confirmed until reception
+            completes administrative review.
+          </p>
+        </div>
+        <div className="rounded-2xl border border-[#102b3d]/10 bg-white p-6">
+          <h2 className="font-serif text-2xl">Rescheduling standard</h2>
+          <p className="mt-3 text-sm leading-6 text-[#102b3d]/65">
+            Release the previous hold, select a replacement time, and document
+            the reason through the clinic’s scheduling workflow.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }

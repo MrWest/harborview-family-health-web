@@ -10,14 +10,38 @@ import type { ClientManagedAssistantProps } from "@/features/directiv/types";
 import { AssistantUnavailableNotice } from "./AssistantUnavailableNotice";
 import { HarborviewChatbox } from "./HarborviewChatbox";
 
-export function ClientManagedAssistant({ actor, conversationId, pageName }: ClientManagedAssistantProps) {
+export function ClientManagedAssistant({
+  actor,
+  conversationId,
+  pageName,
+}: ClientManagedAssistantProps) {
   const apiKey = process.env.NEXT_PUBLIC_DIRECTIVSYS_API_KEY;
   const router = useRouter();
   const pathname = usePathname();
-  const history = useMemo(() => createHarborviewConversationHistory(conversationId, actor), [actor, conversationId]);
-  const onIntentDetected = useMemo(() => createHarborviewAgentActions({ actor, pathname, navigate: router.push }), [actor, pathname, router.push]);
-  const currentContext = useMemo(() => createHarborviewAssistantContext(actor, pageName, pathname), [actor, pageName, pathname]);
+  const history = useMemo(
+    () => createHarborviewConversationHistory(conversationId, actor),
+    [actor, conversationId],
+  );
+  const onIntentDetected = useMemo(
+    () =>
+      createHarborviewAgentActions({ actor, pathname, navigate: router.push }),
+    [actor, pathname, router.push],
+  );
+  const currentContext = useMemo(
+    () => createHarborviewAssistantContext(actor, pageName, pathname),
+    [actor, pageName, pathname],
+  );
 
-  if (!apiKey) return <AssistantUnavailableNotice/>;
-  return <HarborviewChatbox apiKey={apiKey} actor={actor} conversationId={conversationId} pageName={pageName} onIntentDetected={onIntentDetected} history={history} currentContext={currentContext}/>;
+  if (!apiKey) return <AssistantUnavailableNotice />;
+  return (
+    <HarborviewChatbox
+      apiKey={apiKey}
+      actor={actor}
+      conversationId={conversationId}
+      pageName={pageName}
+      onIntentDetected={onIntentDetected}
+      history={history}
+      currentContext={currentContext}
+    />
+  );
 }

@@ -13,9 +13,18 @@ const styles = {
 };
 
 export function StatusPanel({ tone, title, children }: StatusPanelProps) {
-  const Icon = tone === "success" ? CheckCircle2 : tone === "error" ? AlertCircle : Info;
-  return <div className={`flex gap-3 rounded-xl border p-4 text-sm ${styles[tone]}`} role={tone === "error" ? "alert" : "status"}>
-    <Icon size={18} className="mt-0.5 shrink-0" />
-    <div><strong className="block">{title}</strong><div className="mt-1 leading-6">{children}</div></div>
-  </div>;
+  const Icon =
+    tone === "success" ? CheckCircle2 : tone === "error" ? AlertCircle : Info;
+  return (
+    <div
+      className={`flex gap-3 rounded-xl border p-4 text-sm ${styles[tone]}`}
+      role={tone === "error" ? "alert" : "status"}
+    >
+      <Icon size={18} className="mt-0.5 shrink-0" />
+      <div>
+        <strong className="block">{title}</strong>
+        <div className="mt-1 leading-6">{children}</div>
+      </div>
+    </div>
+  );
 }

@@ -25,7 +25,11 @@ export type ProofGuideScenario = {
   route: string;
   routeLabel: string;
   visual: ProofGuideVisual;
-  referenceDownloads?: Array<{ label: string; path: string; downloadName: string }>;
+  referenceDownloads?: Array<{
+    label: string;
+    path: string;
+    downloadName: string;
+  }>;
   setup: string;
   prompts: string[];
   expected: string;
@@ -44,9 +48,18 @@ export const HARBORVIEW_PROOF_SCENARIOS: ProofGuideScenario[] = [
       kind: "overview",
       title: "Three separate administrative lanes",
       items: [
-        { label: "New patient", detail: "Prepare a browser-local registration draft." },
-        { label: "Existing patient", detail: "Use a synthetic, patient-scoped portal." },
-        { label: "Reception", detail: "Review and confirm staff-owned operations." },
+        {
+          label: "New patient",
+          detail: "Prepare a browser-local registration draft.",
+        },
+        {
+          label: "Existing patient",
+          detail: "Use a synthetic, patient-scoped portal.",
+        },
+        {
+          label: "Reception",
+          detail: "Review and confirm staff-owned operations.",
+        },
       ],
     },
     setup:
@@ -99,8 +112,14 @@ export const HARBORVIEW_PROOF_SCENARIOS: ProofGuideScenario[] = [
       kind: "services",
       title: "Synthetic portal scope",
       items: [
-        { label: "Appointments", detail: "Own administrative appointment details." },
-        { label: "Released results", detail: "Release status and portal link only." },
+        {
+          label: "Appointments",
+          detail: "Own administrative appointment details.",
+        },
+        {
+          label: "Released results",
+          detail: "Release status and portal link only.",
+        },
         { label: "Documents", detail: "Post-registration document requests." },
       ],
     },

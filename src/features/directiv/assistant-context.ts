@@ -1,7 +1,11 @@
 // Design: Conversation context communicates the active Harborview lane and safety boundary without transferring documents or clinical decision-making to Directiv.
 import type { DemoActor } from "@/lib/clinic-types";
 
-export function createHarborviewAssistantContext(actor: DemoActor, pageName: string, pathname: string) {
+export function createHarborviewAssistantContext(
+  actor: DemoActor,
+  pageName: string,
+  pathname: string,
+) {
   return {
     userId: actor.id,
     userName: actor.mode,

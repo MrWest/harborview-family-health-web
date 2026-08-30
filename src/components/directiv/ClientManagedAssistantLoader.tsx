@@ -4,16 +4,36 @@
 import { useEffect, useState } from "react";
 import type { DemoActor } from "@/lib/clinic-types";
 
-type AssistantComponent = (props: { actor: DemoActor; conversationId: string; pageName: string }) => React.ReactNode;
+type AssistantComponent = (props: {
+  actor: DemoActor;
+  conversationId: string;
+  pageName: string;
+}) => React.ReactNode;
 
-export function ClientManagedAssistantLoader({ actor, conversationId, pageName }: { actor: DemoActor; conversationId: string; pageName: string }) {
+export function ClientManagedAssistantLoader({
+  actor,
+  conversationId,
+  pageName,
+}: {
+  actor: DemoActor;
+  conversationId: string;
+  pageName: string;
+}) {
   const [Assistant, setAssistant] = useState<AssistantComponent | null>(null);
   useEffect(() => {
     let active = true;
     void import("./ClientManagedAssistant").then((module) => {
       if (active) setAssistant(() => module.ClientManagedAssistant);
     });
-    return () => { active = false; };
+    return () => {
+      active = false;
+    };
   }, []);
-  return Assistant ? <Assistant actor={actor} conversationId={conversationId} pageName={pageName}/> : null;
+  return Assistant ? (
+    <Assistant
+      actor={actor}
+      conversationId={conversationId}
+      pageName={pageName}
+    />
+  ) : null;
 }
