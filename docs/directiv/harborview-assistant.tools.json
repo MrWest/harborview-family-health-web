@@ -38,6 +38,37 @@
       ]
     },
     {
+      "toolName": "update_local_intake_draft",
+      "description": "Apply one browser-local patch containing every approved, non-empty new-intake form value the receptionist explicitly provided or confirmed in chat. This does not create a patient, registration, intake, hold, or appointment. Never include patient-reported conditions, allergies, medications, or procedures inferred from context; include them only when the receptionist explicitly states or confirms the text in chat.",
+      "isReadOnly": false,
+      "supportsZeroResultStrategy": false,
+      "parameters": [
+        { "parameterName": "displayName", "parameterType": "string", "description": "Optional full legal name explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "dateOfBirth", "parameterType": "string", "description": "Optional date of birth explicitly confirmed by the receptionist in YYYY-MM-DD format.", "isRequired": false },
+        { "parameterName": "email", "parameterType": "string", "description": "Optional email explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "phone", "parameterType": "string", "description": "Optional telephone number explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "preferredLanguage", "parameterType": "string", "description": "Optional preferred language explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "countryOrRegion", "parameterType": "string", "description": "Optional country or region explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "addressLine1", "parameterType": "string", "description": "Optional first address line explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "addressLine2", "parameterType": "string", "description": "Optional second address line explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "city", "parameterType": "string", "description": "Optional city explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "stateOrProvince", "parameterType": "string", "description": "Optional state or province explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "postalCode", "parameterType": "string", "description": "Optional postal or ZIP code explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "communicationPreference", "parameterType": "string", "description": "Optional preferred contact method explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "emergencyContactName", "parameterType": "string", "description": "Optional emergency contact name explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "emergencyContactRelationship", "parameterType": "string", "description": "Optional emergency-contact relationship explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "emergencyContactPhone", "parameterType": "string", "description": "Optional emergency contact telephone explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "payerOrPlan", "parameterType": "string", "description": "Optional payer or coverage plan explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "memberOrPolicyNumber", "parameterType": "string", "description": "Optional member or policy number explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "referralSource", "parameterType": "string", "description": "Optional referral source explicitly confirmed by the receptionist.", "isRequired": false },
+        { "parameterName": "reasonForVisit", "parameterType": "string", "description": "Optional administrative reason for visit explicitly confirmed by the receptionist; never interpret it clinically.", "isRequired": false },
+        { "parameterName": "patientReportedConditions", "parameterType": "string", "description": "Optional patient-reported text only when the receptionist explicitly confirms it in chat; extracted/unverified, not a diagnosis.", "isRequired": false },
+        { "parameterName": "patientReportedAllergies", "parameterType": "string", "description": "Optional patient-reported text only when the receptionist explicitly confirms it in chat; extracted/unverified, not a clinical decision.", "isRequired": false },
+        { "parameterName": "patientReportedMedications", "parameterType": "string", "description": "Optional patient-reported text only when the receptionist explicitly confirms it in chat; extracted/unverified, with no medication guidance.", "isRequired": false },
+        { "parameterName": "patientReportedProcedures", "parameterType": "string", "description": "Optional patient-reported text only when the receptionist explicitly confirms it in chat; extracted/unverified, with no clinical interpretation.", "isRequired": false }
+      ]
+    },
+    {
       "toolName": "search_recognition_availability",
       "description": "Find currently available administrative recognition appointment times by specialty. This only browses availability and does not hold or book a time.",
       "isReadOnly": true,

@@ -21,6 +21,7 @@ type AgentActionOptions = {
 };
 
 const VISITOR_DRAFT_STORAGE_KEY = "harborview:visitor-registration-draft";
+const INTAKE_DRAFT_STORAGE_KEY = "harborview:reception-intake-draft";
 const VISITOR_DRAFT_FIELDS = [
   "displayName",
   "dateOfBirth",
@@ -47,12 +48,70 @@ const VISITOR_DRAFT_FIELDS = [
   "patientReportedProcedures",
 ] as const;
 const VISITOR_DRAFT_FIELD_SET = new Set<string>(VISITOR_DRAFT_FIELDS);
+// Intake draft uses the same field set as visitor registration, gated to the receptionist lane.
+const INTAKE_DRAFT_FIELDS = VISITOR_DRAFT_FIELDS;
+const INTAKE_DRAFT_FIELD_SET = new Set<string>(INTAKE_DRAFT_FIELDS);
 const PATIENT_REPORTED_DRAFT_FIELDS = new Set<string>([
   "patientReportedConditions",
   "patientReportedAllergies",
   "patientReportedMedications",
   "patientReportedProcedures",
 ]);
+
+function updateIntakeDraft(toolCall: ToolCall, actor: DemoActor): ToolResult {
+  if (actor.mode !== "receptionist")
+    return blocked(
+      "This local intake-draft action is available only in the receptionist lane.",
+    );
+  const patch = Object.entries(toolCall.parameters)
+    .filter(
+      ([field, value]) =>
+        INTAKE_DRAFT_FIELD_SET.has(field) &&
+        typeof value === "string" &&
+        value.trim().length > 0,
+    )
+    .map(([field, value]) => [field, (value as string).trim()] as const)
+    .filter(([field, value]) => {
+      if (
+        value.length > (PATIENT_REPORTED_DRAFT_FIELDS.has(field) ? 1000 : 350)
+      )
+        return false;
+      if (field === "dateOfBirth") return /^\d{4}-\d{2}-\d{2}$/.test(value);
+      if (field === "email") return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      return true;
+    });
+
+  if (!patch.length)
+    return blocked(
+      "At least one approved, non-empty, receptionist-confirmed intake value is required for a local draft update.",
+    );
+
+  const saved = JSON.parse(
+    window.localStorage.getItem(INTAKE_DRAFT_STORAGE_KEY) ?? '{"fields":{}}',
+  ) as { fields?: Record<string, string>; extractedFields?: string[] };
+  const updatedFields = patch.map(([field]) => field);
+  const next = {
+    ...saved,
+    fields: { ...(saved.fields ?? {}), ...Object.fromEntries(patch) },
+    extractedFields: (saved.extractedFields ?? []).filter(
+      (field) => !updatedFields.includes(field),
+    ),
+  };
+  window.localStorage.setItem(INTAKE_DRAFT_STORAGE_KEY, JSON.stringify(next));
+  window.dispatchEvent(
+    new CustomEvent("harborview:reception-intake-draft-updated", { detail: next }),
+  );
+
+  return {
+    status: "success",
+    summary: `Updated ${updatedFields.length} local new-intake draft field${updatedFields.length === 1 ? "" : "s"}. No patient, registration, intake, hold, or appointment was created.`,
+    detailed_data: {
+      updatedFields,
+      persisted: false,
+      clientManagedBoundary: "browser-local reception intake draft only",
+    },
+  };
+}
 
 function blocked(summary: string): ToolResult {
   return { status: "error", summary, detailed_data: { status: "blocked" } };
@@ -244,6 +303,8 @@ export function createHarborviewAgentActions(
       switch (toolCall.toolName) {
         case "update_local_registration_draft":
           return updateVisitorDraft(toolCall, actor);
+        case "update_local_intake_draft":
+          return updateIntakeDraft(toolCall, actor);
         case "navigate_to_view":
           return navigateToView(toolCall, options);
         case "navigate_to_record":
