@@ -48,7 +48,7 @@ export function HarborviewChatbox({
       apiKey={apiKey}
       config={{
         timeout: 30000,
-        baseURL: "https://staging-api.directivsys.com",
+        baseURL: process.env.NEXT_PUBLIC_DIRECTIVSYS_API_BASE_URL,
       }}
     >
       <DirectivSysChatbox
