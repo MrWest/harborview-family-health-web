@@ -135,31 +135,32 @@ export const HARBORVIEW_PROOF_SCENARIOS: ProofGuideScenario[] = [
     id: "reception",
     tab: "Reception desk",
     eyebrow: "03 · Receptionist lane",
-    title: "Turn an intake document into a staff-reviewed next step",
+    title: "Ask the assistant to pre-fill the intake form from a referral",
     route: "/reception/new-intake",
     routeLabel: "Open new intake",
     visual: {
-      kind: "image",
-      path: "/download/harborview-proof/harborview_reception_duplicate_review.png",
-      alt: "Fictional conceptual reference showing reception staff reviewing possible duplicate patient matches",
-      downloadName: "harborview_reception_duplicate_review.png",
+      kind: "pdf",
+      path: "/download/harborview-proof/harborview_sofia_rivera_spanish_referral.pdf",
+      alt: "Fictional Spanish referral document for Sofía Rivera, used as a source for receptionist-guided intake form completion",
+      downloadName: "harborview_sofia_rivera_spanish_referral.pdf",
     },
     referenceDownloads: [
       {
-        label: "Spanish referral sample",
-        path: "/download/harborview-proof/harborview_sofia_rivera_spanish_referral.pdf",
-        downloadName: "harborview_sofia_rivera_spanish_referral.pdf",
+        label: "Duplicate review reference",
+        path: "/download/harborview-proof/harborview_reception_duplicate_review.png",
+        downloadName: "harborview_reception_duplicate_review.png",
       },
     ],
     setup:
-      "Open the staff intake workspace and upload the fictional Spanish referral through the intake form. Review candidate values and possible duplicate matches before continuing.",
+      "Download the fictional Spanish referral. Open the new intake workspace and upload the PDF directly in the chat assistant. Ask the assistant to fill the intake form — the Directiv orchestrator reads the document, extracts the available fields, and populates the form live without you typing a single value.",
     prompts: [
-      "What information is still missing from this intake draft?",
-      "Find the earliest recognition availability after I review the duplicate matches.",
+      "Help me fill the intake form for this patient. [upload the referral PDF in chat]",
+      "What fields are still missing before I can create the draft?",
+      "Find the earliest Family Medicine recognition time after I create the draft.",
     ],
     expected:
-      "Reception reviews candidates and duplicate matches before creating or matching a patient and intake, then searches availability. Booking is written only after explicit staff confirmation.",
+      "The assistant maps all confirmed values in a single call and the form fields update live without a page reload. Once required fields are complete, reception creates a draft, reviews duplicate matches, and searches availability. Booking is written only after explicit staff confirmation.",
     boundary:
-      "The assistant supports administrative orchestration. It does not diagnose, triage, interpret a record, or independently complete a consequential booking.",
+      "The assistant pre-fills administrative fields only from values the receptionist explicitly provides or confirms in chat — it does not read documents directly. It does not diagnose, triage, or independently complete a consequential booking.",
   },
 ];
