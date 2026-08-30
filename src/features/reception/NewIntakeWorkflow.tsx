@@ -255,7 +255,7 @@ export function NewIntakeWorkflow() {
               </strong>
               <span className="mt-1 block text-xs leading-5 text-[#102b3d]/60">
                 Harborview stores source-document metadata and candidate fields;
-                Directiv does not receive the document.
+                Directiv only processes the document.
               </span>
               <input
                 className="sr-only"
