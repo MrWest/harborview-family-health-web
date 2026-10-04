@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@directivsys/react-sdk':
-        specifier: 0.1.14
-        version: 0.1.14(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        specifier: ^0.1.15
+        version: 0.1.15(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       lucide-react:
         specifier: ^1.33.0
         version: 1.33.0(react@19.2.8)
@@ -122,12 +122,12 @@ packages:
     resolution: {integrity: sha512-Vj1jF3cPfxg7OAfoI7QnVKLoILlm2JF9pnVHrX8qx7AHMiYWT+NDAA7jChlNgRS4WTLc/fD1lXLmPixluj+3Gg==}
     engines: {node: '>=6.9.0'}
 
-  '@directivsys/core-sdk@0.1.10':
-    resolution: {integrity: sha512-cxaA5jF6cLSoTXYhANwR3W7yn1PzYilnDr2fI38e6MulBwgFeec3S/xzSugdT8SUQSCm9EcExcSwdYRgQxbyjw==}
+  '@directivsys/core-sdk@0.1.12':
+    resolution: {integrity: sha512-OmlX76wVfpOvsBpBoQVcsrrL9mSu8PROn6gTTVv2qFtY+ELVxj+an+JGAgcZBKwGxsPwZZyWi4iHhoWCsbUT7A==}
     engines: {node: '>=18'}
 
-  '@directivsys/react-sdk@0.1.14':
-    resolution: {integrity: sha512-85MpeU29UWSeHhqi6qxVPvZ1aVb0afKVwvYk2W1SlBdm4fTPQN8mG1UQQ0L8TqLEPO1Eme/ltGoQtq5q1o+ylQ==}
+  '@directivsys/react-sdk@0.1.15':
+    resolution: {integrity: sha512-v4yySSFZswmHEfUQNRMOfqJKJuLgHb24I394B3H0yV1jYLCY4iXukAjkU3Ub+e9kMhfLPKWQHUGAn81xRxqKvQ==}
     peerDependencies:
       react: '>=18'
       react-dom: '>=18'
@@ -2133,11 +2133,11 @@ snapshots:
       '@babel/helper-string-parser': 7.29.7
       '@babel/helper-validator-identifier': 7.29.7
 
-  '@directivsys/core-sdk@0.1.10': {}
+  '@directivsys/core-sdk@0.1.12': {}
 
-  '@directivsys/react-sdk@0.1.14(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@directivsys/react-sdk@0.1.15(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@directivsys/core-sdk': 0.1.10
+      '@directivsys/core-sdk': 0.1.12
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
 
